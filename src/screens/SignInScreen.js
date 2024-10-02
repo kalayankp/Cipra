@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 
-const image1 = require('./img/image1.jpg'); 
-const image2 = require('./img/image2.png'); 
-const image3 = require('./img/image3.jpg'); 
+
+const cipraLogo = require('./img/cipra-logo.png'); 
+const image1 = require('./img/image1.jpg');
+const image2 = require('./img/image2.png');
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Sample default images data
+
   const defaultImages = [
     {
       date: "2024-10-01",
@@ -21,17 +22,27 @@ const SignInScreen = ({ navigation }) => {
       date: "2024-10-02",
       imageUrl: image2,
       recommendation: "Second Image Recommendation"
-    },
-    {
-      date: "2024-10-03",
-      imageUrl: image3,
-      recommendation: "Third Image Recommendation"
-    },
+    }
   ];
 
+
   const handleSignIn = () => {
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+   
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     if (email === 'jared.leitner@gmail.com' && password === 'Test123!*') {
-      // Navigate to ImageDisplayScreen with default images
+      setError('');
+    
       navigation.navigate('ImageDisplay', { images: defaultImages });
     } else {
       setError('Invalid email or password.');
@@ -39,9 +50,13 @@ const SignInScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      
+    <ScrollView contentContainerStyle={styles.container}>
+    
+      <Image source={cipraLogo} style={styles.logo} />
+
       <Text style={styles.title}>Welcome Back!</Text>
+      
+      
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -49,37 +64,47 @@ const SignInScreen = ({ navigation }) => {
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
+        textContentType="emailAddress"
       />
+
+ 
       <TextInput
         style={styles.input}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        textContentType="password"
       />
+
+  
       {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
+
+ 
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E9F5FF', // Light background color
+    backgroundColor: '#E9F5FF', 
     padding: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 150,
+    height: 150,
     marginBottom: 20,
+    resizeMode: 'contain', 
   },
   title: {
     fontSize: 28,
@@ -96,7 +121,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
-    elevation: 2, // Add slight shadow effect
+    elevation: 2, 
   },
   button: {
     width: '100%',
